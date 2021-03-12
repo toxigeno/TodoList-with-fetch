@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "reactstrap";
 
 function Todo() {
 	const [tareas, setTareas] = useState("");
@@ -11,9 +10,9 @@ function Todo() {
 		const fetchText = async () => {
 			let fetchBody = await fetch(fetchUrl)
 				.then(response => response.json())
-				.then(body => {
-					console.log("body del request", body);
-					let html = body.map(tareas => tareas.label);
+				.then(fetchBody => {
+					console.log("body del request", fetchBody);
+					let html = fetchBody(tareas => tareas.label);
 					console.log(html);
 				})
 				.catch(error => console.log("error", error));
