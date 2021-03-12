@@ -1,10 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "reactstrap";
 
 function Todo() {
+	const [tareas, setTareas] = useState("");
+
+	useEffect(() => {
+		let fetchUrl =
+			"https://assets.breatheco.de/apis/fake/todos/user/melissaaraya";
+
+		const fetchText = async () => {
+			let fetchBody = await fetch(fetchUrl)
+				.then(response => response.json())
+				.then(body => {
+					console.log("body del request", body);
+					let html = body.map(tareas => tareas.label);
+					console.log(html);
+				})
+				.catch(error => console.log("error", error));
+
+			console.log(fetchBody);
+			setTareas(fetchBody);
+		};
+
+		fetchText();
+	}, []);
+
 	const [task, setTask] = useState("");
 	const [listTask, setListTask] = useState([]);
-	const [isShown, setIsShown] = useState(false);
 
 	const putTask = () => {
 		if (task != "") {
@@ -25,7 +47,7 @@ function Todo() {
 			<div className="todo-box row p-3">
 				<div className="col">
 					<h1 className="text-center">To Do</h1>
-					<div className="input-group">
+					<div className="input-group mb-2">
 						<input
 							type="text"
 							className="form-control"
@@ -39,7 +61,7 @@ function Todo() {
 							{/* botón para meter task */}
 							<button
 								onClick={putTask}
-								className="btn btn-outline-secondary"
+								className="btn btn-dark"
 								type="button">
 								confirm
 							</button>
@@ -49,24 +71,24 @@ function Todo() {
 						{listTask.map((item, index) => {
 							return (
 								<li
-									onMouseEnter={() => setIsShown(true)}
-									onMouseLeave={() => setIsShown(false)}
 									key={index}
-									className="list-group-item list-group-item-action">
+									className="d-flex list-group-item list-group-item-action">
 									{item}
-									{isShown && (
-										<Button
-											close
-											type="button"
-											className="btn-close"
+									<div id="close-icon" className="ml-auto">
+										<i
 											onClick={() => {
 												deleteTask(index);
 											}}
-										/>
-									)}
+											className="far fa-times-circle"></i>
+									</div>
 								</li>
 							);
 						})}
+					</ul>
+					<ul className="list-group">
+						<li className="d-flex list-group-item list-group-item-action">
+							{tareas}
+						</li>
 					</ul>
 					<small className="text-muted ml-2">
 						{listTask.length} tareas por hacer
