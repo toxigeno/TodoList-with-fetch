@@ -1,35 +1,58 @@
 import React, { useState, useEffect } from "react";
 
 function Todo() {
-	const [tareas, setTareas] = useState("");
-
-	useEffect(() => {
-		let fetchUrl =
-			"https://assets.breatheco.de/apis/fake/todos/user/melissaaraya";
-
-		const fetchText = async () => {
-			let fetchBody = await fetch(fetchUrl)
-				.then(response => response.json())
-				.then(fetchBody => {
-					console.log("body del request", fetchBody);
-					let html = fetchBody(tareas => tareas.label);
-					console.log(html);
-				})
-				.catch(error => console.log("error", error));
-
-			console.log(fetchBody);
-			setTareas(fetchBody);
-		};
-
-		fetchText();
-	}, []);
-
 	const [task, setTask] = useState("");
 	const [listTask, setListTask] = useState([]);
 
-	const putTask = () => {
+	useEffect(() => {
+		getList();
+	}, []);
+
+	const getList = () => {
+		console.log("Entró Get List");
+		let fetchUrl =
+			"https://assets.breatheco.de/apis/fake/todos/user/melissaaraya";
+		fetch(fetchUrl)
+			.then(response => response.json())
+			.then(fetchBody => {
+				setListTask(
+					fetchBody.map(item => {
+						return { label: item.label, done: item.done };
+					})
+				);
+			})
+			.catch(error => console.log("error", error));
+	};
+
+	const putFetch = listTaskNew => {
+		console.log(listTaskNew);
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+
+		var raw = JSON.stringify(listTaskNew);
+		console.log("Body Request ", raw);
+
+		var requestOptions = {
+			method: "PUT",
+			headers: myHeaders,
+			body: raw,
+			redirect: "follow"
+		};
+
+		fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/melissaaraya",
+			requestOptions
+		)
+			.then(response => response.text())
+			.then(result => console.log("Resultado", result))
+			.catch(error => console.log("error", error));
+	};
+
+	const putTask = e => {
+		e.preventDefault();
 		if (task != "") {
-			setListTask([...listTask, task]);
+			setListTask([...listTask, { label: task, done: false }]);
+			putFetch(listTask);
 			setTask("");
 		} else {
 			alert("Por favor ingrese tarea antes de confirmar");
@@ -47,24 +70,17 @@ function Todo() {
 				<div className="col">
 					<h1 className="text-center">To Do</h1>
 					<div className="input-group mb-2">
-						<input
-							type="text"
-							className="form-control"
-							placeholder="add new task"
-							onChange={e => {
-								setTask(e.target.value);
-							}}
-							value={task}
-						/>
-						<div className="input-group-append">
-							{/* botón para meter task */}
-							<button
-								onClick={putTask}
-								className="btn btn-dark"
-								type="button">
-								confirm
-							</button>
-						</div>
+						<form onSubmit={putTask}>
+							<input
+								type="text"
+								className="form-control"
+								placeholder="add new task"
+								onChange={e => {
+									setTask(e.target.value);
+								}}
+								value={task}
+							/>
+						</form>
 					</div>
 					<ul className="list-group">
 						{listTask.map((item, index) => {
@@ -72,7 +88,7 @@ function Todo() {
 								<li
 									key={index}
 									className="d-flex list-group-item list-group-item-action">
-									{item}
+									{item.label}
 									<div id="close-icon" className="ml-auto">
 										<i
 											onClick={() => {
@@ -83,11 +99,6 @@ function Todo() {
 								</li>
 							);
 						})}
-					</ul>
-					<ul className="list-group">
-						<li className="d-flex list-group-item list-group-item-action">
-							{tareas}
-						</li>
 					</ul>
 					<small className="text-muted ml-2">
 						{listTask.length} tareas por hacer
