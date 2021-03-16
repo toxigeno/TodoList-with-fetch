@@ -9,7 +9,6 @@ function Todo() {
 	}, []);
 
 	const getList = () => {
-		console.log("Entró Get List");
 		let fetchUrl =
 			"https://assets.breatheco.de/apis/fake/todos/user/melissaaraya";
 		fetch(fetchUrl)
@@ -25,12 +24,10 @@ function Todo() {
 	};
 
 	const putFetch = listTaskNew => {
-		console.log(listTaskNew);
 		var myHeaders = new Headers();
 		myHeaders.append("Content-Type", "application/json");
 
 		var raw = JSON.stringify(listTaskNew);
-		console.log("Body Request ", raw);
 
 		var requestOptions = {
 			method: "PUT",
@@ -45,14 +42,14 @@ function Todo() {
 		)
 			.then(response => response.text())
 			.then(result => console.log("Resultado", result))
+			.then(() => getList())
 			.catch(error => console.log("error", error));
 	};
 
 	const putTask = e => {
 		e.preventDefault();
 		if (task != "") {
-			setListTask([...listTask, { label: task, done: false }]);
-			putFetch(listTask);
+			putFetch([...listTask, { label: task, done: false }]);
 			setTask("");
 		} else {
 			alert("Por favor ingrese tarea antes de confirmar");
@@ -61,7 +58,7 @@ function Todo() {
 
 	const deleteTask = indexDelete => {
 		let resultado = listTask.filter((task, index) => index != indexDelete);
-		setListTask(resultado);
+		putFetch(resultado);
 	};
 
 	return (
