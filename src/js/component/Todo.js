@@ -68,15 +68,27 @@ function Todo() {
 					<h1 className="text-center">To Do</h1>
 					<div className="input-group mb-2">
 						<form onSubmit={putTask}>
-							<input
-								type="text"
-								className="form-control"
-								placeholder="add new task"
-								onChange={e => {
-									setTask(e.target.value);
-								}}
-								value={task}
-							/>
+							<div d-flex>
+								<input
+									type="text"
+									className="form-control"
+									placeholder="add new task"
+									onChange={e => {
+										setTask(e.target.value);
+									}}
+									value={task}
+									placeholder="Enter new task"
+								/>
+								<button
+									onChange={e => {
+										setTask(e.target.value);
+									}}
+									value={task}
+									className="btn btn-outline-secondary"
+									type="button">
+									Confirm
+								</button>
+							</div>
 						</form>
 					</div>
 					<ul className="list-group">
@@ -98,7 +110,7 @@ function Todo() {
 						})}
 					</ul>
 					<small className="text-muted ml-2">
-						{listTask.length} tareas por hacer
+						{listTask.length} To do&#8217; s
 					</small>
 				</div>
 			</div>
