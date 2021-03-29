@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
-
 function Todo() {
 	const [task, setTask] = useState("");
 	const [listTask, setListTask] = useState([]);
-
 	useEffect(() => {
 		getList();
 	}, []);
-
 	const getList = () => {
 		let fetchUrl =
 			"https://assets.breatheco.de/apis/fake/todos/user/melissaaraya";
@@ -22,20 +19,16 @@ function Todo() {
 			})
 			.catch(error => console.log("error", error));
 	};
-
 	const putFetch = listTaskNew => {
 		var myHeaders = new Headers();
 		myHeaders.append("Content-Type", "application/json");
-
 		var raw = JSON.stringify(listTaskNew);
-
 		var requestOptions = {
 			method: "PUT",
 			headers: myHeaders,
 			body: raw,
 			redirect: "follow"
 		};
-
 		fetch(
 			"https://assets.breatheco.de/apis/fake/todos/user/melissaaraya",
 			requestOptions
@@ -45,22 +38,32 @@ function Todo() {
 			.then(() => getList())
 			.catch(error => console.log("error", error));
 	};
-
-	const putTask = e => {
-		e.preventDefault();
-		if (task != "") {
+	const putTask = () => {
+		//cambio sin parametro "e"
+		// e.preventDefault(); eliminamos el prevent para que el botón funcione
+		if (task !== "") {
 			putFetch([...listTask, { label: task, done: false }]);
 			setTask("");
 		} else {
 			alert("Por favor ingrese tarea antes de confirmar");
 		}
 	};
-
 	const deleteTask = indexDelete => {
 		let resultado = listTask.filter((task, index) => index != indexDelete);
 		putFetch(resultado);
 	};
-
+	// Delete all Tasks and user
+	const deleteAll = async () => {
+		const request = await fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/melissaaraya",
+			{ method: "DELETE" }
+		);
+		const json = await request.json();
+		const data = json;
+		createUser();
+		fetchData();
+		console.log("delete response", data);
+	};
 	return (
 		<div className="container">
 			<div className="todo-box row p-3">
@@ -80,10 +83,7 @@ function Todo() {
 									placeholder="Enter new task"
 								/>
 								<button
-									onChange={e => {
-										setTask(e.target.value);
-									}}
-									value={task}
+									onClick={e => putTask(e.target.value)} //este botón añade la nueva tarea
 									className="btn btn-primary"
 									type="button">
 									Confirm
@@ -117,5 +117,4 @@ function Todo() {
 		</div>
 	);
 }
-
 export default Todo;
