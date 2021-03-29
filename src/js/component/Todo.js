@@ -66,9 +66,9 @@ function Todo() {
 			<div className="todo-box row p-3">
 				<div className="col">
 					<h1 className="text-center">To Do</h1>
-					<div className="input-group mb-2">
+					<div className="mb-2">
 						<form onSubmit={putTask}>
-							<div d-flex>
+							<div className="d-flex">
 								<input
 									type="text"
 									className="form-control"
@@ -84,7 +84,7 @@ function Todo() {
 										setTask(e.target.value);
 									}}
 									value={task}
-									className="btn btn-outline-secondary"
+									className="btn btn-primary"
 									type="button">
 									Confirm
 								</button>
